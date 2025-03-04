@@ -12,6 +12,24 @@ dist
 dist-ssr
 *.local
 
+*.jsx~
+*.js~
+*.ts~
+*.tsx~
+*.css~
+*.less~
+*.scss~
+*.sass~
+*.styl~
+*.png~
+*.gif~
+*.jpg~
+*.jpeg~
+*.svg~
+*.ico~
+*.bmp~
+*.tiff~
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
