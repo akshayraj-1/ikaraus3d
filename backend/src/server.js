@@ -35,27 +35,39 @@ const upload = multer({ storage: multerDiskStorage });
 // Routes
 
 // Get All Models
-app.get("/models", (req, res) => {
+app.get("/models", async (req, res) => {
     // TODO: Add pagination
-    firestore.collection("models").get().then((snapshot) => {
-        const models = [];
-        snapshot.forEach((doc) => {
-            models.push(doc.data());
-        });
-        res.json(models);
+    const snapshot = await firestore.collection("models").get();
+    const models = [];
+    snapshot.forEach((doc) => {
+        models.push(doc.data());
     });
+    console.log(models);
+    res.json(models);
 });
 
-// Search Models
-app.get("/models/search", (req, res) => {
-    const { q } = req.query;
-    firestore.collection("models").where("name", "array-contains", q).get().then((snapshot) => {
-        const models = [];
-        snapshot.forEach((doc) => {
-            models.push(doc.data());
+// Get Particular Model
+app.get("/models/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const docRef = firestore.collection("models").doc(id);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({
+                success: false,
+                message: "Model not found"
+            });
+        }
+
+        res.json({ id: doc.id, ...doc.data() });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: process.env.NODE_ENV === "development" ? error.message : "Internal server error"
         });
-        res.json(models);
-    });
+    }
 });
 
 
